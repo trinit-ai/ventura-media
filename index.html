@@ -3,8 +3,876 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Ventura Media</title>
+<title>Ventura Media — Design &amp; Technology Studio</title>
+<meta property="og:title" content="Ventura Media">
+<meta property="og:description" content="A private design and technology studio. Jersey City, NJ.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400;1,500&family=Cormorant:ital,wght@0,300;0,400;0,600;0,700;1,300;1,400;1,600&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --cream: #F4F0E6;
+    --white: #FAFAF6;
+    --black: #0F0E0C;
+    --walnut: #7A5230;
+    --red: #C03018;
+    --blue: #1A4A9E;
+    --yellow: #E8C432;
+    --teal: #3A9C88;
+    --orange: #D85E20;
+    --f-serif: 'Cormorant Garamond', Georgia, serif;
+    --f-display: 'Cormorant', Georgia, serif;
+    --f-sans: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+  }
+
+  html { scroll-behavior: smooth; }
+  body {
+    background: var(--cream);
+    color: var(--black);
+    font-family: var(--f-serif);
+    line-height: 1.5;
+    border: 4px solid var(--black);
+    min-height: 100vh;
+    font-feature-settings: 'liga' 1, 'dlig' 1, 'onum' 1, 'kern' 1;
+    position: relative;
+  }
+
+  /* Paper grain — subtle */
+  body::before {
+    content: '';
+    position: fixed; inset: 0;
+    pointer-events: none;
+    z-index: 9999;
+    opacity: 0.045;
+    mix-blend-mode: multiply;
+    background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='240' height='240'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' seed='4'/><feColorMatrix values='0 0 0 0 0  0 0 0 0 0  0 0 0 0 0  0 0 0 0.6 0'/></filter><rect width='240' height='240' filter='url(%23n)'/></svg>");
+  }
+
+  /* Scroll reveal */
+  .rv { opacity: 0; transform: translateY(8px); transition: opacity 700ms cubic-bezier(.22,1,.36,1), transform 700ms cubic-bezier(.22,1,.36,1); }
+  .rv.in { opacity: 1; transform: none; }
+  .rv-d1 { transition-delay: 60ms; }
+  .rv-d2 { transition-delay: 120ms; }
+  .rv-d3 { transition-delay: 180ms; }
+  .rv-d4 { transition-delay: 240ms; }
+  @media (prefers-reduced-motion: reduce) {
+    .rv { opacity: 1; transform: none; transition: none; }
+  }
+
+  /* ── TELEMETRY STRIP ── */
+  .telemetry {
+    background: var(--black);
+    border-bottom: 3px solid var(--black);
+    padding: 0 64px;
+    height: 28px;
+    display: flex;
+    align-items: center;
+    gap: 28px;
+    font-family: var(--f-sans);
+    font-size: 9px;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: rgba(244,240,230,0.48);
+    font-weight: 600;
+    overflow: hidden;
+    white-space: nowrap;
+  }
+  .tel-dot {
+    width: 7px; height: 7px; border-radius: 50%;
+    background: var(--teal);
+    box-shadow: 0 0 0 0 rgba(58,156,136,0.55);
+    animation: tel-pulse 2.6s ease-out infinite;
+  }
+  @keyframes tel-pulse {
+    0%   { box-shadow: 0 0 0 0 rgba(58,156,136,0.55); }
+    70%  { box-shadow: 0 0 0 8px rgba(58,156,136,0); }
+    100% { box-shadow: 0 0 0 0 rgba(58,156,136,0); }
+  }
+  .tel-item { display: inline-flex; align-items: center; gap: 10px; }
+  .tel-item strong { color: var(--cream); font-weight: 700; letter-spacing: 0.2em; }
+  .tel-item em { font-style: normal; color: var(--yellow); font-weight: 700; }
+  .tel-sep { color: rgba(244,240,230,0.18); }
+
+  /* ── NAV ── */
+  nav {
+    background: var(--black);
+    padding: 0 64px;
+    height: 56px;
+    display: flex; align-items: center; justify-content: space-between;
+    border-bottom: 3px solid var(--black);
+    position: sticky; top: 0; z-index: 100;
+  }
+  .nav-wordmark {
+    font-family: var(--f-display);
+    font-size: 19px;
+    letter-spacing: 0.06em;
+    color: var(--cream);
+  }
+  .nav-wordmark strong { font-weight: 700; font-style: normal; }
+  .nav-wordmark em { font-style: italic; color: rgba(244,240,230,0.65); font-weight: 300; }
+  .nav-links { display: flex; list-style: none; }
+  .nav-links li {
+    font-family: var(--f-sans);
+    font-size: 9px; letter-spacing: 0.22em; text-transform: uppercase;
+    color: rgba(244,240,230,0.4);
+    padding: 0 24px;
+    border-left: 1px solid rgba(255,255,255,0.08);
+    height: 56px; display: flex; align-items: center;
+    cursor: pointer; transition: color 0.2s;
+  }
+  .nav-links li:hover { color: var(--yellow); }
+  .nav-cta {
+    font-family: var(--f-sans);
+    font-size: 9px; letter-spacing: 0.2em; text-transform: uppercase;
+    padding: 10px 22px; background: var(--red); color: var(--cream);
+    cursor: pointer; font-weight: 700; text-decoration: none;
+    border: none; transition: background 0.2s;
+  }
+  .nav-cta:hover { background: #A02510; }
+
+  /* ── HERO ── */
+  .hero {
+    display: grid;
+    grid-template-columns: 3fr 1fr;
+    border-bottom: 3px solid var(--black);
+  }
+  .hero-main {
+    padding: 96px 64px 84px;
+    border-right: 3px solid var(--black);
+    background: var(--white);
+  }
+  .hero-eyebrow {
+    font-family: var(--f-sans);
+    font-size: 9px; letter-spacing: 0.3em; text-transform: uppercase;
+    color: var(--walnut); margin-bottom: 40px;
+  }
+  .hero-h1 {
+    font-family: var(--f-display);
+    font-size: clamp(54px, 6.5vw, 92px);
+    font-weight: 300; line-height: 0.93;
+    letter-spacing: 0.01em; color: var(--black); margin-bottom: 44px;
+  }
+  .hero-h1 strong { font-weight: 700; display: block; }
+  .hero-h1 em { font-style: italic; color: var(--red); font-weight: 300; }
+  .hero-sub {
+    font-family: var(--f-serif);
+    font-size: 17px; color: rgba(15,14,12,0.48);
+    line-height: 1.9; max-width: 420px;
+    font-style: italic; font-weight: 300;
+  }
+  .hero-panels {
+    display: grid;
+    grid-template-rows: 1fr 1fr 1fr 1fr 1fr;
+    position: relative;
+    overflow: hidden;
+  }
+  .hero-panels > div {
+    transform-origin: right center;
+    animation: panel-in 900ms cubic-bezier(.22,1,.36,1) both;
+    position: relative;
+    overflow: hidden;
+  }
+  .hero-panels > div:nth-child(1) { animation-delay: 120ms; }
+  .hero-panels > div:nth-child(2) { animation-delay: 200ms; }
+  .hero-panels > div:nth-child(3) { animation-delay: 280ms; }
+  .hero-panels > div:nth-child(4) { animation-delay: 360ms; }
+  .hero-panels > div:nth-child(5) { animation-delay: 440ms; }
+  @keyframes panel-in {
+    from { transform: scaleX(0); }
+    to   { transform: scaleX(1); }
+  }
+  /* Subtle idle drift: a soft gleam crosses each panel once every ~18s */
+  .hero-panels > div::after {
+    content: '';
+    position: absolute; inset: 0;
+    background: linear-gradient(115deg, transparent 40%, rgba(255,255,255,0.14) 50%, transparent 60%);
+    transform: translateX(-120%);
+    animation: panel-gleam 18s ease-in-out infinite;
+    pointer-events: none;
+  }
+  .hero-panels > div:nth-child(2)::after { animation-delay: 3s; }
+  .hero-panels > div:nth-child(3)::after { animation-delay: 6s; }
+  .hero-panels > div:nth-child(4)::after { animation-delay: 9s; }
+  .hero-panels > div:nth-child(5)::after { animation-delay: 12s; }
+  @keyframes panel-gleam {
+    0%, 92%   { transform: translateX(-120%); }
+    96%       { transform: translateX(120%); }
+    100%      { transform: translateX(120%); }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .hero-panels > div, .hero-panels > div::after { animation: none !important; transform: none !important; }
+  }
+  .panel-red    { background: var(--red);    border-bottom: 3px solid var(--black); }
+  .panel-white  { background: var(--white);  border-bottom: 3px solid var(--black); }
+  .panel-blue   { background: var(--blue);   border-bottom: 3px solid var(--black); }
+  .panel-yellow { background: var(--yellow); border-bottom: 3px solid var(--black); }
+  .panel-teal   { background: var(--teal); }
+
+  /* ── STATS ── */
+  .stats {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    border-bottom: 3px solid var(--black);
+  }
+  .stat {
+    background: var(--black);
+    border-right: 3px solid var(--black);
+  }
+  .stat:last-child { border-right: none; }
+  .stat-inner { padding: 60px 64px; display: flex; flex-direction: column; gap: 20px; }
+  .stat-n {
+    font-family: var(--f-display);
+    font-size: 80px; font-weight: 300;
+    color: var(--cream); line-height: 1;
+    letter-spacing: -0.02em;
+  }
+  .stat-n em {
+    font-style: italic; color: var(--yellow);
+    font-size: 38px; vertical-align: super; margin-left: 4px;
+  }
+  .stat-rule { width: 36px; height: 1px; background: rgba(244,240,230,0.15); }
+  .stat-l {
+    font-family: var(--f-sans);
+    font-size: 9px; letter-spacing: 0.2em; text-transform: uppercase;
+    color: rgba(244,240,230,0.36); line-height: 1.75;
+  }
+
+  /* ── WORK ── */
+  .work { border-bottom: 3px solid var(--black); }
+  .work-head {
+    padding: 20px 64px; background: var(--black);
+    border-bottom: 3px solid var(--black);
+    display: flex; align-items: center; justify-content: space-between;
+  }
+  .work-head span {
+    font-family: var(--f-sans);
+    font-size: 9px; letter-spacing: 0.28em; text-transform: uppercase;
+    color: var(--cream); font-weight: 700;
+  }
+  .work-head em {
+    font-family: var(--f-serif);
+    font-size: 13px; color: rgba(244,240,230,0.3);
+    font-style: italic; font-weight: 300;
+  }
+  .wi {
+    display: grid;
+    grid-template-columns: 6px 1fr 220px 80px;
+    align-items: stretch;
+    border-bottom: 2px solid var(--black);
+    cursor: pointer; background: var(--white);
+    transition: background 0.25s cubic-bezier(.22,1,.36,1);
+    text-decoration: none; color: inherit;
+    position: relative;
+    overflow: hidden;
+  }
+  .wi::before {
+    content: '';
+    position: absolute;
+    left: 6px; right: 0; bottom: 0;
+    height: 1px;
+    background: var(--black);
+    transform: scaleX(0);
+    transform-origin: left;
+    transition: transform 600ms cubic-bezier(.22,1,.36,1);
+  }
+  .wi:hover::before { transform: scaleX(1); }
+  .wi:hover { background: var(--cream); }
+  .wi:hover .wi-body { transform: translateX(6px); }
+  .wi:hover .wi-accent { width: 12px; }
+  .wi:hover .wi-num { color: rgba(15,14,12,0.45); letter-spacing: 0.08em; }
+  .wi:last-child { border-bottom: none; }
+  .wi-accent {
+    width: 6px; flex-shrink: 0;
+    transition: width 350ms cubic-bezier(.22,1,.36,1);
+  }
+  .wi-body { transition: transform 350ms cubic-bezier(.22,1,.36,1); }
+  .wi-accent.red   { background: var(--red); }
+  .wi-accent.blue  { background: var(--blue); }
+  .wi-accent.teal  { background: var(--teal); }
+  .wi-body { padding: 36px 40px; border-right: 2px solid var(--black); }
+  .wi-title {
+    font-family: var(--f-display);
+    font-size: 28px; font-weight: 400;
+    color: var(--black); margin-bottom: 10px;
+  }
+  .wi-desc {
+    font-family: var(--f-serif);
+    font-size: 13.5px; color: rgba(15,14,12,0.42);
+    line-height: 1.75; font-style: italic; font-weight: 300;
+  }
+  .wi-meta {
+    padding: 36px 28px; border-right: 2px solid var(--black);
+    display: flex; flex-direction: column; justify-content: center; gap: 6px;
+  }
+  .wi-type {
+    font-family: var(--f-sans);
+    font-size: 8.5px; letter-spacing: 0.16em; text-transform: uppercase;
+    color: rgba(15,14,12,0.36); font-weight: 700;
+  }
+  .wi-loc {
+    font-family: var(--f-serif);
+    font-size: 13px; color: rgba(15,14,12,0.28); font-style: italic;
+  }
+  .wi-num {
+    display: flex; align-items: center; justify-content: center;
+    font-family: var(--f-serif);
+    font-size: 13px; color: rgba(15,14,12,0.14); font-style: italic;
+    transition: color 350ms ease, letter-spacing 350ms ease;
+  }
+
+  /* ── FEATURE ── */
+  .feature {
+    display: grid; grid-template-columns: 1fr 1fr;
+    border-bottom: 3px solid var(--black);
+  }
+  .feature-l {
+    padding: 68px 64px; border-right: 3px solid var(--black);
+    background: var(--white);
+    display: flex; flex-direction: column; justify-content: space-between;
+  }
+  .feat-label {
+    font-family: var(--f-sans);
+    font-size: 9px; letter-spacing: 0.28em; text-transform: uppercase;
+    color: var(--walnut); font-weight: 700; margin-bottom: 22px;
+  }
+  .feat-h {
+    font-family: var(--f-display);
+    font-size: 32px; font-weight: 300; color: var(--black);
+    line-height: 1.2; margin-bottom: 18px;
+  }
+  .feat-h strong { font-weight: 700; color: var(--red); }
+  .feat-p {
+    font-family: var(--f-serif);
+    font-size: 14.5px; color: rgba(15,14,12,0.5);
+    line-height: 1.85; font-style: italic; font-weight: 300;
+  }
+  .feat-tags { display: flex; gap: 0; flex-wrap: wrap; margin-top: 32px; }
+  .tag {
+    font-family: var(--f-sans);
+    font-size: 8px; letter-spacing: 0.12em; text-transform: uppercase;
+    padding: 6px 14px; border: 2px solid var(--black); color: var(--black);
+    margin-right: -2px; margin-bottom: -2px; font-weight: 700; background: var(--cream);
+  }
+
+  /* Feature grid — Eames facade panels */
+  .feature-r {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    grid-template-rows: 1fr 1fr 1fr;
+  }
+  .fp {
+    border-bottom: 3px solid var(--black);
+    border-right: 3px solid var(--black);
+    display: flex; align-items: center; justify-content: center;
+    padding: 20px; min-height: 120px;
+    overflow: hidden;
+  }
+  .fp:nth-child(2n) { border-right: none; }
+  .fp:nth-last-child(-n+2) { border-bottom: none; }
+  .fp.w { background: var(--white); }
+  .fp.r { background: var(--red); }
+  .fp.y { background: var(--yellow); }
+  .fp.k { background: var(--black); }
+  .fp.b { background: var(--blue); }
+  .fp.c { background: var(--cream); }
+
+  /* ── PILLARS ── */
+  .pillars {
+    display: grid; grid-template-columns: 1fr 1fr 1fr;
+    border-bottom: 3px solid var(--black);
+  }
+  .pillar {
+    padding: 52px 48px; border-right: 2px solid var(--black);
+    background: var(--cream);
+  }
+  .pillar:last-child { border-right: none; }
+  .pillar-bar {
+    height: 4px; margin-bottom: 36px;
+    transform: scaleX(0); transform-origin: left;
+    transition: transform 900ms cubic-bezier(.22,1,.36,1) 120ms;
+  }
+  .pillar.rv.in .pillar-bar { transform: scaleX(1); }
+  .pillar-n {
+    font-family: var(--f-serif);
+    font-size: 14px; font-style: italic;
+    color: rgba(15,14,12,0.2); margin-bottom: 14px;
+  }
+  .pillar-title {
+    font-family: var(--f-display);
+    font-size: 21px; font-weight: 600;
+    color: var(--black); margin-bottom: 14px; line-height: 1.2;
+  }
+  .pillar-desc {
+    font-family: var(--f-serif);
+    font-size: 14px; color: rgba(15,14,12,0.46);
+    line-height: 1.82; font-style: italic; font-weight: 300;
+  }
+
+  /* ── CAPABILITIES ── */
+  .caps {
+    display: grid; grid-template-columns: 300px 1fr;
+    border-bottom: 3px solid var(--black);
+  }
+  .caps-l {
+    background: var(--black); padding: 56px 48px;
+    border-right: 3px solid var(--black);
+    display: flex; flex-direction: column; gap: 20px;
+  }
+  .caps-label {
+    font-family: var(--f-sans);
+    font-size: 9px; letter-spacing: 0.28em; text-transform: uppercase;
+    color: var(--yellow); font-weight: 700;
+  }
+  .caps-note {
+    font-family: var(--f-serif);
+    font-size: 15px; color: rgba(244,240,230,0.38);
+    line-height: 1.85; font-style: italic; font-weight: 300;
+  }
+  .caps-r {
+    display: grid; grid-template-columns: 1fr 1fr;
+  }
+  .cap {
+    padding: 30px 40px;
+    border-bottom: 2px solid var(--black);
+    border-right: 2px solid var(--black);
+    background: var(--white);
+  }
+  .cap:nth-child(even) { border-right: none; background: var(--cream); }
+  .cap:nth-last-child(-n+2) { border-bottom: none; }
+  .cap-n {
+    font-family: var(--f-display);
+    font-size: 18px; font-weight: 600;
+    color: var(--black); margin-bottom: 6px;
+  }
+  .cap-d {
+    font-family: var(--f-serif);
+    font-size: 12.5px; color: rgba(15,14,12,0.4);
+    font-style: italic; line-height: 1.65; font-weight: 300;
+  }
+
+  /* ── CONTACT ── */
+  .contact {
+    display: grid; grid-template-columns: 1fr 1fr;
+    border-bottom: 3px solid var(--black);
+  }
+  .contact-l {
+    padding: 72px 64px; border-right: 3px solid var(--black);
+    background: var(--red);
+  }
+  .contact-label {
+    font-family: var(--f-sans);
+    font-size: 9px; letter-spacing: 0.28em; text-transform: uppercase;
+    color: rgba(244,240,230,0.55); font-weight: 700; margin-bottom: 28px;
+  }
+  .contact-h {
+    font-family: var(--f-display);
+    font-size: 42px; font-weight: 300;
+    color: var(--cream); line-height: 1.1; margin-bottom: 24px;
+  }
+  .contact-h strong { font-weight: 700; display: block; }
+  .contact-p {
+    font-family: var(--f-serif);
+    font-size: 15px; color: rgba(244,240,230,0.55);
+    line-height: 1.85; margin-bottom: 40px;
+    font-style: italic; font-weight: 300;
+  }
+  .btn {
+    display: inline-flex; align-items: center; gap: 12px;
+    font-family: var(--f-sans);
+    font-size: 9px; letter-spacing: 0.22em; text-transform: uppercase;
+    font-weight: 700; padding: 14px 28px;
+    background: var(--black); color: var(--cream);
+    cursor: pointer; border: none; text-decoration: none;
+    transition: background 0.2s;
+    position: relative;
+    overflow: hidden;
+    --mx: 50%; --my: 50%;
+  }
+  .btn::before {
+    content: '';
+    position: absolute; inset: 0;
+    background: radial-gradient(circle 80px at var(--mx) var(--my), rgba(232,196,50,0.35), transparent 70%);
+    opacity: 0;
+    transition: opacity 250ms ease;
+    pointer-events: none;
+  }
+  .btn:hover::before { opacity: 1; }
+  .btn:hover { background: #2A2824; }
+  .btn > * { position: relative; z-index: 1; }
+
+  .nav-cta {
+    position: relative;
+    overflow: hidden;
+    --mx: 50%; --my: 50%;
+  }
+  .nav-cta::before {
+    content: '';
+    position: absolute; inset: 0;
+    background: radial-gradient(circle 60px at var(--mx) var(--my), rgba(255,255,255,0.22), transparent 70%);
+    opacity: 0;
+    transition: opacity 220ms ease;
+    pointer-events: none;
+  }
+  .nav-cta:hover::before { opacity: 1; }
+  .nav-cta > * { position: relative; z-index: 1; }
+  .contact-r {
+    padding: 72px 64px; background: var(--white);
+    display: flex; flex-direction: column; justify-content: center;
+  }
+  .cr {
+    display: flex; justify-content: space-between; align-items: baseline;
+    padding: 20px 0; border-bottom: 1.5px solid rgba(15,14,12,0.09);
+  }
+  .cr:first-child { border-top: 1.5px solid rgba(15,14,12,0.09); }
+  .crk {
+    font-family: var(--f-sans);
+    font-size: 8.5px; letter-spacing: 0.22em; text-transform: uppercase;
+    color: rgba(15,14,12,0.28); font-weight: 700;
+  }
+  .crv {
+    font-family: var(--f-serif);
+    font-size: 16px; color: rgba(15,14,12,0.52);
+    font-style: italic; font-weight: 300;
+  }
+
+  /* ── FOOTER ── */
+  footer {
+    background: var(--black); padding: 20px 64px;
+    display: flex; justify-content: space-between; align-items: center;
+  }
+  .footer-l {
+    font-family: var(--f-serif);
+    font-size: 12px; color: rgba(244,240,230,0.28); font-style: italic;
+  }
+  .footer-l span { color: var(--yellow); font-style: normal; }
+  .footer-r { display: flex; gap: 36px; }
+  .footer-r a {
+    font-family: var(--f-sans);
+    font-size: 9px; letter-spacing: 0.18em; text-transform: uppercase;
+    color: rgba(244,240,230,0.28); text-decoration: none;
+  }
+  .footer-r a:hover { color: var(--yellow); }
+</style>
 </head>
 <body>
+
+<!-- NAV -->
+<nav>
+  <div class="nav-wordmark"><strong>Ventura</strong> <em>Media</em></div>
+  <ul class="nav-links">
+    <li><a href="#studio" style="color:inherit;text-decoration:none;">Studio</a></li>
+    <li><a href="#work" style="color:inherit;text-decoration:none;">Work</a></li>
+    <li><a href="#capabilities" style="color:inherit;text-decoration:none;">Capabilities</a></li>
+    <li><a href="#contact" style="color:inherit;text-decoration:none;">Contact</a></li>
+  </ul>
+  <a href="#contact" class="nav-cta">Begin a Project &nbsp;&#8599;</a>
+</nav>
+
+<!-- TELEMETRY -->
+<div class="telemetry" id="telemetry">
+  <span class="tel-item"><span class="tel-dot"></span><strong>Studio Active</strong></span>
+  <span class="tel-sep">·</span>
+  <span class="tel-item">Jersey City <strong id="tel-time">—</strong></span>
+  <span class="tel-sep">·</span>
+  <span class="tel-item">Last deploy <strong id="tel-deploy">14m ago</strong></span>
+  <span class="tel-sep">·</span>
+  <span class="tel-item">Q2 2026 <em id="tel-slots">2 slots</em></span>
+  <span class="tel-sep">·</span>
+  <span class="tel-item">Next start <strong>Apr 28</strong></span>
+</div>
+
+<!-- HERO -->
+<section class="hero" id="studio">
+  <div class="hero-main">
+    <div class="hero-eyebrow rv">Design &nbsp;/&nbsp; Technology &nbsp;/&nbsp; Intelligence</div>
+    <div class="hero-h1 rv rv-d1">
+      <strong>Ventura</strong>
+      Design &amp; technology<br>
+      for the <em>exceptional.</em>
+    </div>
+    <div class="hero-sub rv rv-d2">A private studio building bespoke digital experiences, AI-native products, and brand systems for clients who understand that distinction cannot be templated. Jersey City, NJ.</div>
+  </div>
+  <div class="hero-panels">
+    <div class="panel-red"></div>
+    <div class="panel-white"></div>
+    <div class="panel-blue"></div>
+    <div class="panel-yellow"></div>
+    <div class="panel-teal"></div>
+  </div>
+</section>
+
+<!-- STATS -->
+<div class="stats">
+  <div class="stat rv">
+    <div class="stat-inner">
+      <div class="stat-n"><span class="count" data-to="15" data-pad="0">0</span><em>yr</em></div>
+      <div class="stat-rule"></div>
+      <div class="stat-l">Design &amp; engineering<br>background</div>
+    </div>
+  </div>
+  <div class="stat rv rv-d1">
+    <div class="stat-inner">
+      <div class="stat-n"><span class="count" data-to="100" data-pad="0">0</span><em>%</em></div>
+      <div class="stat-rule"></div>
+      <div class="stat-l">Custom &mdash; no templates<br>no lock-in</div>
+    </div>
+  </div>
+  <div class="stat rv rv-d2">
+    <div class="stat-inner">
+      <div class="stat-n"><span class="count" data-to="1" data-pad="2">00</span><em>principal</em></div>
+      <div class="stat-rule"></div>
+      <div class="stat-l">You work with the<br>person who builds it</div>
+    </div>
+  </div>
+</div>
+
+<!-- WORK -->
+<section class="work" id="work">
+  <div class="work-head">
+    <span>Selected Work</span>
+    <em>Three Engagements</em>
+  </div>
+  <div class="wi rv">
+    <div class="wi-accent red"></div>
+    <div class="wi-body">
+      <div class="wi-title">Kelly-McKenna Gallery</div>
+      <div class="wi-desc">AI-native gallery site with integrated Gallery Guide chat panel. Full custom CMS replacing ArtLogic subscription infrastructure. Spring Lake, NJ.</div>
+    </div>
+    <div class="wi-meta"><div class="wi-type">Gallery &middot; AI &middot; Web</div><div class="wi-loc">Spring Lake, NJ</div></div>
+    <div class="wi-num">001</div>
+  </div>
+  <div class="wi rv">
+    <div class="wi-accent blue"></div>
+    <div class="wi-body">
+      <div class="wi-title">Ventura, Miesowitz &amp; Keough</div>
+      <div class="wi-desc">Rebrand concept for a 40-year Summit, NJ law practice. Complete design system across home, attorney bio, and practice area templates.</div>
+    </div>
+    <div class="wi-meta"><div class="wi-type">Law &middot; Brand &middot; Web</div><div class="wi-loc">Summit, NJ</div></div>
+    <div class="wi-num">002</div>
+  </div>
+  <div class="wi rv">
+    <div class="wi-accent teal"></div>
+    <div class="wi-body">
+      <div class="wi-title">Rob Ventura Studio</div>
+      <div class="wi-desc">Fine art portfolio with AI artist chat feature ("Artist Talk"), custom artwork registry, and Supabase backend replacing ArtLogic.</div>
+    </div>
+    <div class="wi-meta"><div class="wi-type">Fine Art &middot; AI &middot; Full-stack</div><div class="wi-loc">Hoboken, NJ</div></div>
+    <div class="wi-num">003</div>
+  </div>
+</section>
+
+<!-- FEATURE: AI Capability + Panel Grid -->
+<div class="feature">
+  <div class="feature-l">
+    <div>
+      <div class="feat-label">Signature Capability</div>
+      <div class="feat-h">AI built into the <strong>fabric</strong> of every site.</div>
+      <div class="feat-p">Every build we deliver can accommodate a custom AI chat interface — not a third-party widget, but a fully integrated, design-matched panel trained on the client's own context. Gallery guides, legal intake, artist Q&amp;A, product advisors.</div>
+    </div>
+    <div class="feat-tags">
+      <span class="tag">Claude API</span>
+      <span class="tag">Custom UI</span>
+      <span class="tag">RAG</span>
+      <span class="tag">Context-aware</span>
+      <span class="tag">Zero third-party</span>
+    </div>
+  </div>
+  <div class="feature-r">
+    <!-- Panel 1: Golden ratio SVG -->
+    <div class="fp w">
+      <svg viewBox="0 0 200 124" width="180" height="112" xmlns="http://www.w3.org/2000/svg">
+        <rect x="0" y="0" width="124" height="124" fill="none" stroke="#0F0E0C" stroke-width="1.5" opacity="0.12"/>
+        <rect x="0" y="0" width="76" height="76" fill="none" stroke="#0F0E0C" stroke-width="1.5" opacity="0.12"/>
+        <rect x="76" y="0" width="48" height="48" fill="none" stroke="#0F0E0C" stroke-width="1.5" opacity="0.12"/>
+        <rect x="76" y="48" width="30" height="29" fill="none" stroke="#0F0E0C" stroke-width="1.5" opacity="0.12"/>
+        <rect x="106" y="48" width="18" height="18" fill="none" stroke="#C03018" stroke-width="1" opacity="0.4"/>
+        <path d="M124,124 Q124,0 0,0" fill="none" stroke="#C03018" stroke-width="1.5" opacity="0.5"/>
+        <path d="M124,124 Q124,48 76,48" fill="none" stroke="#1A4A9E" stroke-width="1" opacity="0.35"/>
+        <path d="M76,48 Q76,0 124,0" fill="none" stroke="#3A9C88" stroke-width="1" opacity="0.3"/>
+        <text x="2" y="135" font-family="Georgia,serif" font-size="8" fill="#0F0E0C" fill-opacity="0.25" font-style="italic">φ = 1.618</text>
+        <text x="130" y="12" font-family="Georgia,serif" font-size="7" fill="#0F0E0C" fill-opacity="0.2" font-style="italic">Golden Ratio</text>
+      </svg>
+    </div>
+    <!-- Panel 2: Red -->
+    <div class="fp r"></div>
+    <!-- Panel 3: Yellow -->
+    <div class="fp y"></div>
+    <!-- Panel 4: Black — Fibonacci -->
+    <div class="fp k">
+      <svg viewBox="0 0 160 100" width="150" height="94" xmlns="http://www.w3.org/2000/svg">
+        <text x="80" y="20" font-family="Georgia,serif" font-size="9" fill="#E8C432" fill-opacity="0.55" text-anchor="middle" font-style="italic" letter-spacing="2">Fibonacci</text>
+        <text x="80" y="40" font-family="Georgia,serif" font-size="11" fill="white" fill-opacity="0.12" text-anchor="middle" letter-spacing="3">1  1  2  3</text>
+        <text x="80" y="58" font-family="Georgia,serif" font-size="11" fill="white" fill-opacity="0.18" text-anchor="middle" letter-spacing="3">5  8  13  21</text>
+        <text x="80" y="76" font-family="Georgia,serif" font-size="11" fill="white" fill-opacity="0.1" text-anchor="middle" letter-spacing="3">34  55  89 ...</text>
+        <line x1="20" y1="88" x2="140" y2="88" stroke="#E8C432" stroke-width="0.5" stroke-opacity="0.3"/>
+        <text x="80" y="98" font-family="Georgia,serif" font-size="7" fill="#E8C432" fill-opacity="0.3" text-anchor="middle" font-style="italic">every layout, every grid</text>
+      </svg>
+    </div>
+    <!-- Panel 5: Blue -->
+    <div class="fp b"></div>
+    <!-- Panel 6: Cream — Est -->
+    <div class="fp c" style="flex-direction:column;gap:4px;">
+      <span style="font-family:'Cormorant Garamond',serif;font-size:9px;letter-spacing:0.22em;text-transform:uppercase;color:rgba(15,14,12,0.25);">Est.</span>
+      <span style="font-family:'Cormorant',serif;font-size:36px;font-weight:300;color:rgba(15,14,12,0.18);line-height:1;">2025</span>
+    </div>
+  </div>
+</div>
+
+<!-- PILLARS -->
+<div class="pillars">
+  <div class="pillar rv">
+    <div class="pillar-bar" style="background:var(--red);"></div>
+    <div class="pillar-n">i.</div>
+    <div class="pillar-title">Ownership-First Architecture</div>
+    <div class="pillar-desc">No SaaS, no subscriptions. You receive the repository, the schema, the design system — everything. Full transfer on delivery.</div>
+  </div>
+  <div class="pillar rv">
+    <div class="pillar-bar" style="background:var(--blue);"></div>
+    <div class="pillar-n">ii.</div>
+    <div class="pillar-title">Mathematical Design Precision</div>
+    <div class="pillar-desc">Golden ratio, Fibonacci grids, and logarithmic spacing applied to every layout — structural logic, not decoration.</div>
+  </div>
+  <div class="pillar rv">
+    <div class="pillar-bar" style="background:var(--teal);"></div>
+    <div class="pillar-n">iii.</div>
+    <div class="pillar-title">Principal-Led, Always</div>
+    <div class="pillar-desc">One principal conceives, designs, engineers, and deploys every engagement. No handoffs, no dilution, no account managers.</div>
+  </div>
+</div>
+
+<!-- CAPABILITIES -->
+<section class="caps" id="capabilities">
+  <div class="caps-l">
+    <div class="caps-label">Capabilities</div>
+    <div class="caps-note">Bespoke only. You own everything — outright. No platforms, no subscriptions, no vendor dependencies.</div>
+  </div>
+  <div class="caps-r">
+    <div class="cap"><div class="cap-n">Web Design &amp; Engineering</div><div class="cap-d">React · TypeScript · Vercel · Full-stack production builds</div></div>
+    <div class="cap"><div class="cap-n">AI Agent Integration</div><div class="cap-d">Claude API · Custom chat interfaces · Workflow automation</div></div>
+    <div class="cap"><div class="cap-n">Database &amp; Backend</div><div class="cap-d">Supabase · PostgreSQL · FastAPI · Railway</div></div>
+    <div class="cap"><div class="cap-n">Brand Identity Systems</div><div class="cap-d">Typography · Color · Visual language · OG / favicon</div></div>
+    <div class="cap"><div class="cap-n">Photography &amp; Direction</div><div class="cap-d">Product · Portrait · Fine art documentation · Editorial</div></div>
+    <div class="cap"><div class="cap-n">Platform Migration</div><div class="cap-d">ArtLogic · Squarespace · Legacy CMS exits with full data continuity</div></div>
+  </div>
+</section>
+
+<!-- CONTACT -->
+<section class="contact" id="contact">
+  <div class="contact-l">
+    <div class="contact-label">New Engagements</div>
+    <div class="contact-h"><strong>Selective.</strong>Serious inquiries are welcome.</div>
+    <div class="contact-p">A small number of projects are accepted each quarter to ensure every client receives full principal attention. If you are building something that deserves to be made well — reach out directly.</div>
+    <a href="mailto:info@venturamedia.com" class="btn">Begin a Conversation &nbsp;&#8599;</a>
+  </div>
+  <div class="contact-r">
+    <div class="cr"><span class="crk">Studio</span><span class="crv">Jersey City, New Jersey</span></div>
+    <div class="cr"><span class="crk">Electronic Mail</span><span class="crv">info@venturamedia.com</span></div>
+    <div class="cr"><span class="crk">Principal</span><span class="crv">Rob Ventura</span></div>
+    <div class="cr"><span class="crk">Instagram</span><span class="crv">@venturamedia</span></div>
+    <div class="cr"><span class="crk">Availability</span><span class="crv">Q2 2026 &mdash; selective</span></div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-l">&copy; 2026 <span>Ventura Media</span> &mdash; Jersey City, NJ. All rights reserved.</div>
+  <div class="footer-r">
+    <a href="#">Privacy</a>
+    <a href="#">Instagram</a>
+    <a href="#">LinkedIn</a>
+  </div>
+</footer>
+
+<script>
+  // Telemetry clock — Jersey City local time (America/New_York)
+  (function(){
+    const el = document.getElementById('tel-time');
+    if (!el) return;
+    const fmt = new Intl.DateTimeFormat('en-US', {
+      timeZone: 'America/New_York',
+      hour: '2-digit', minute: '2-digit', hour12: false
+    });
+    const tick = () => {
+      const parts = fmt.formatToParts(new Date());
+      const h = parts.find(p => p.type === 'hour').value;
+      const m = parts.find(p => p.type === 'minute').value;
+      el.textContent = h + ':' + m + ' EDT';
+    };
+    tick();
+    setInterval(tick, 30000);
+
+    // Deploy time: show minutes since page load + a random offset
+    const deployEl = document.getElementById('tel-deploy');
+    const start = Date.now();
+    const base = 14;
+    const updateDeploy = () => {
+      const mins = base + Math.floor((Date.now() - start) / 60000);
+      deployEl.textContent = mins + 'm ago';
+    };
+    setInterval(updateDeploy, 60000);
+  })();
+
+  // Scroll reveal
+  (function(){
+    const els = document.querySelectorAll('.rv');
+    if (!('IntersectionObserver' in window) || !els.length) {
+      els.forEach(e => e.classList.add('in'));
+      return;
+    }
+    const io = new IntersectionObserver((entries) => {
+      entries.forEach(e => {
+        if (e.isIntersecting) {
+          e.target.classList.add('in');
+          io.unobserve(e.target);
+        }
+      });
+    }, { rootMargin: '0px 0px -10% 0px', threshold: 0.08 });
+    els.forEach(e => io.observe(e));
+  })();
+
+  // Stat counters — run when .stat enters view
+  (function(){
+    const counters = document.querySelectorAll('.count');
+    if (!counters.length) return;
+    const animate = (el) => {
+      const to = parseInt(el.dataset.to, 10);
+      const pad = parseInt(el.dataset.pad || '0', 10);
+      const dur = 1200;
+      const start = performance.now();
+      const ease = (t) => 1 - Math.pow(1 - t, 3);
+      const step = (now) => {
+        const t = Math.min(1, (now - start) / dur);
+        const val = Math.round(to * ease(t));
+        el.textContent = pad ? String(val).padStart(pad, '0') : val;
+        if (t < 1) requestAnimationFrame(step);
+      };
+      requestAnimationFrame(step);
+    };
+    const io = new IntersectionObserver((entries) => {
+      entries.forEach(e => {
+        if (e.isIntersecting) {
+          animate(e.target);
+          io.unobserve(e.target);
+        }
+      });
+    }, { threshold: 0.4 });
+    counters.forEach(c => io.observe(c));
+  })();
+
+  // Cursor-glow tracking on CTAs
+  (function(){
+    const btns = document.querySelectorAll('.btn, .nav-cta');
+    btns.forEach(b => {
+      b.addEventListener('pointermove', (e) => {
+        const r = b.getBoundingClientRect();
+        b.style.setProperty('--mx', (e.clientX - r.left) + 'px');
+        b.style.setProperty('--my', (e.clientY - r.top) + 'px');
+      });
+    });
+  })();
+</script>
+
 </body>
 </html>
