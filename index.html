@@ -3,558 +3,822 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Ventura Media — Design & Technology Studio</title>
+<title>Ventura Media</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Mono:ital,wght@0,300;0,400;1,300&display=swap" rel="stylesheet">
 <style>
   :root {
-    --bg: #09080A;
-    --surface: #0E0C0F;
-    --surface-lt: #131117;
-    --ink: #DDD5C5;
-    --ink-mid: rgba(221,213,197,0.5);
-    --ink-dim: rgba(221,213,197,0.22);
-    --ink-ghost: rgba(221,213,197,0.08);
-    --gold: #A07838;
-    --gold-lt: #C09650;
-    --gold-dim: rgba(160,120,56,0.15);
-    --gold-rule: rgba(160,120,56,0.22);
-    --frame: rgba(160,120,56,0.35);
-    --f-serif: Georgia,'Times New Roman',serif;
-    --f-sans: -apple-system,'Helvetica Neue',Arial,sans-serif;
+    --bg: #0A0908;
+    --surface: #0F0E0C;
+    --warm: #1A1714;
+    --ink: #C8BFA8;
+    --ink-hi: #E8E0CC;
+    --ink-mid: rgba(200,191,168,0.55);
+    --ink-lo: rgba(200,191,168,0.25);
+    --ink-faint: rgba(200,191,168,0.1);
+    --ink-trace: rgba(200,191,168,0.05);
+    --ochre: #B8923E;
+    --ochre-lt: #D4AA52;
+    --ochre-dim: rgba(184,146,62,0.12);
+    --ochre-rule: rgba(184,146,62,0.18);
+    --red: #8B3A2A;
+    --red-dim: rgba(139,58,42,0.5);
+    --f-serif: Georgia, 'Times New Roman', serif;
+    --f-mono: 'DM Mono', 'SF Mono', 'Consolas', monospace;
+    --f-sans: -apple-system, 'Helvetica Neue', Arial, sans-serif;
+    --grid: 8px;
   }
+
   *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-  html { scroll-behavior: smooth; background: var(--bg); }
-  body { font-family: var(--f-sans); line-height: 1.6; }
+  html { background: var(--bg); }
+  body { font-family: var(--f-mono); color: var(--ink); line-height: 1.6; -webkit-font-smoothing: antialiased; }
   a { color: inherit; text-decoration: none; }
 
-  /* GOLD FRAME */
-  .vm {
-    background: var(--bg);
-    color: var(--ink);
-    position: relative;
-    outline: 1px solid var(--frame);
-    outline-offset: -6px;
+  /* ── TITLE BLOCK — architectural drawing header ── */
+  .title-block {
+    display: grid;
+    grid-template-columns: 1fr auto;
+    padding: 20px 48px;
+    border-bottom: 1px solid var(--ink-faint);
+    align-items: center;
   }
-  .vm::before {
+  .tb-name {
+    font-family: var(--f-serif);
+    font-size: 16px;
+    color: var(--ink-hi);
+    letter-spacing: 0.08em;
+  }
+  .tb-name em { font-style: italic; color: var(--ochre-lt); font-weight: 400; }
+  .tb-meta {
+    display: flex;
+    gap: 36px;
+    align-items: center;
+  }
+  .tb-meta-item {
+    font-size: 9px;
+    letter-spacing: 0.08em;
+    color: var(--ink-lo);
+    text-transform: uppercase;
+  }
+  .tb-meta-item span { color: var(--ink-mid); }
+  .tb-cta {
+    font-size: 9px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--ochre-lt);
+    padding: 8px 20px;
+    border: 1px solid var(--ochre-rule);
+    transition: background 0.2s;
+    cursor: pointer;
+  }
+  .tb-cta:hover { background: var(--ochre-dim); }
+
+  /* ── DATUM — the primary drawing surface ── */
+  .datum {
+    display: grid;
+    grid-template-columns: 48px 1fr;
+    min-height: 100vh;
+    border-bottom: 1px solid var(--ink-faint);
+  }
+
+  /* Left margin — like a drawing's reference edge */
+  .datum-edge {
+    border-right: 1px solid var(--ink-faint);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding-top: 40px;
+    gap: 0;
+    position: relative;
+  }
+  .datum-edge::after {
     content: '';
     position: absolute;
-    inset: 12px;
-    border: 1px solid var(--gold-rule);
-    pointer-events: none;
-    z-index: 50;
+    top: 0; bottom: 0; left: 50%;
+    width: 1px;
+    background: repeating-linear-gradient(
+      to bottom,
+      var(--ink-trace) 0px, var(--ink-trace) 4px,
+      transparent 4px, transparent 32px
+    );
   }
-  .vm-corner { position: absolute; z-index: 51; pointer-events: none; }
-  .vm-corner svg { display: block; }
-  .vm-tl { top: 6px; left: 6px; }
-  .vm-tr { top: 6px; right: 6px; transform: scaleX(-1); }
-  .vm-bl { bottom: 6px; left: 6px; transform: scaleY(-1); }
-  .vm-br { bottom: 6px; right: 6px; transform: scale(-1); }
-
-  /* NAV */
-  .vm-nav {
-    padding: 26px 80px;
-    display: flex; align-items: center; justify-content: space-between;
-    border-bottom: 1px solid var(--gold-rule);
-    position: sticky; top: 0; z-index: 60;
-    background: rgba(9,8,10,0.92);
-    backdrop-filter: blur(12px);
-    -webkit-backdrop-filter: blur(12px);
-  }
-  .vm-mark {
-    font-family: var(--f-serif); font-size: 15px;
-    letter-spacing: 0.1em; color: var(--ink); font-weight: 400;
-  }
-  .vm-mark em { font-style: italic; color: var(--gold-lt); }
-  .vm-nav-links { display: flex; gap: 44px; list-style: none; }
-  .vm-nav-links li {
-    font-size: 9px; letter-spacing: 0.24em; text-transform: uppercase;
-    color: var(--ink-dim); cursor: pointer; transition: color 0.2s;
-  }
-  .vm-nav-links li:hover { color: var(--gold-lt); }
-  .vm-nav-cta {
-    font-size: 9px; letter-spacing: 0.2em; text-transform: uppercase;
-    color: var(--gold-lt); padding: 9px 22px;
-    border: 1px solid var(--gold-rule); cursor: pointer;
-    transition: background 0.2s, color 0.2s;
-  }
-  .vm-nav-cta:hover { background: var(--gold-dim); color: var(--ink); }
-
-  /* HERO */
-  .vm-hero {
-    padding: 100px 80px 88px;
-    display: grid; grid-template-columns: 1fr 300px;
-    gap: 0; border-bottom: 1px solid var(--gold-rule);
-    align-items: end; position: relative; overflow: hidden;
-  }
-  .vm-hero-monogram {
-    position: absolute; right: 320px; top: 50%; transform: translateY(-50%);
-    font-family: var(--f-serif); font-size: 260px; color: rgba(160,120,56,0.03);
-    font-style: italic; line-height: 1; pointer-events: none; user-select: none;
-    letter-spacing: -0.05em;
-  }
-  .vm-hero-l { position: relative; z-index: 1; }
-  .vm-hero-pre {
-    display: flex; align-items: center; gap: 16px; margin-bottom: 48px;
-  }
-  .vm-hero-pre-rule { height: 1px; width: 40px; background: var(--gold); opacity: 0.6; }
-  .vm-hero-pre em {
-    font-size: 9px; letter-spacing: 0.28em; text-transform: uppercase;
-    color: var(--gold); font-style: normal; opacity: 0.8;
-  }
-  .vm-hero-h1 {
-    font-family: var(--f-serif); font-size: clamp(44px, 6vw, 88px);
-    font-weight: 400; line-height: 0.96; letter-spacing: 0.01em;
-    color: var(--ink); margin-bottom: 40px;
-  }
-  .vm-hero-h1 em { font-style: italic; color: var(--gold-lt); }
-  .vm-hero-sub {
-    font-size: 14px; color: var(--ink-mid); line-height: 1.9;
-    max-width: 440px;
-  }
-  .vm-hero-r {
-    position: relative; z-index: 1; border-left: 1px solid var(--gold-rule);
-    padding-left: 48px; padding-bottom: 8px;
-    display: flex; flex-direction: column; justify-content: flex-end; gap: 32px;
-  }
-  .vm-stat-n {
-    font-family: var(--f-serif); font-size: 42px; color: var(--ink);
-    line-height: 1; margin-bottom: 6px;
-  }
-  .vm-stat-n sub { font-size: 14px; color: var(--gold); font-style: italic; }
-  .vm-stat-l {
-    font-size: 9.5px; letter-spacing: 0.14em; text-transform: uppercase;
-    color: var(--ink-dim); line-height: 1.5;
-  }
-  .vm-stat-rule { height: 1px; background: var(--gold-rule); }
-  .vm-hero-loc {
-    font-size: 9px; letter-spacing: 0.22em; text-transform: uppercase;
-    color: var(--ink-ghost); margin-top: 56px;
+  .edge-tick {
+    font-size: 7px;
+    color: var(--ink-lo);
+    letter-spacing: 0.1em;
+    transform: rotate(-90deg);
+    white-space: nowrap;
+    margin-bottom: 120px;
+    position: relative;
+    z-index: 1;
   }
 
-  /* MARQUEE BAND */
-  .vm-band {
-    border-bottom: 1px solid var(--gold-rule);
-    padding: 16px 0; background: var(--surface);
-    overflow: hidden; position: relative;
-  }
-  .vm-band-track {
-    display: flex; gap: 56px; align-items: center;
-    animation: marquee 30s linear infinite;
-    width: max-content;
-  }
-  @keyframes marquee {
-    from { transform: translateX(0); }
-    to { transform: translateX(-50%); }
-  }
-  .vm-band-item { display: flex; align-items: center; gap: 14px; flex-shrink: 0; }
-  .vm-band-diamond { width: 4px; height: 4px; background: var(--gold); opacity: 0.3; transform: rotate(45deg); }
-  .vm-band-text {
-    font-family: var(--f-serif); font-size: 11px; color: var(--ink-dim);
-    font-style: italic; white-space: nowrap; letter-spacing: 0.04em;
-  }
+  /* Main drawing area */
+  .datum-field { padding: 0; }
 
-  /* SECTION HEADER */
-  .vm-sh { display: flex; align-items: center; gap: 20px; margin-bottom: 48px; }
-  .vm-sh-label { font-size: 9px; letter-spacing: 0.28em; text-transform: uppercase; color: var(--gold); opacity: 0.75; white-space: nowrap; }
-  .vm-sh-rule { flex: 1; height: 1px; background: var(--gold-rule); }
-  .vm-sh-aside { font-family: var(--f-serif); font-size: 10px; color: var(--ink-ghost); font-style: italic; white-space: nowrap; }
-
-  /* WORK */
-  .vm-work { padding: 80px 80px; border-bottom: 1px solid var(--gold-rule); }
-  .vm-wi {
-    display: grid; grid-template-columns: 48px 1fr 220px;
-    align-items: center; gap: 36px;
-    padding: 26px 0; border-bottom: 1px solid var(--ink-ghost);
-    cursor: pointer; transition: padding-left 0.3s;
+  /* ── HERO — dense, structural ── */
+  .hero {
+    display: grid;
+    grid-template-columns: 1fr 340px;
+    min-height: calc(100vh - 60px);
   }
-  .vm-wi:first-of-type { border-top: 1px solid var(--ink-ghost); }
-  .vm-wi:hover { padding-left: 12px; }
-  .vm-wi:hover .vm-wi-t { color: var(--gold-lt); }
-  .vm-wi:hover .vm-wi-n { opacity: 0.8; }
-  .vm-wi-n { font-family: var(--f-serif); font-size: 10px; color: var(--gold); opacity: 0.35; font-style: italic; transition: opacity 0.2s; }
-  .vm-wi-body {}
-  .vm-wi-t { font-family: var(--f-serif); font-size: 22px; color: var(--ink); transition: color 0.2s; margin-bottom: 4px; }
-  .vm-wi-desc { font-size: 12px; color: var(--ink-dim); line-height: 1.6; }
-  .vm-wi-meta { text-align: right; }
-  .vm-wi-type { font-size: 9px; letter-spacing: 0.14em; text-transform: uppercase; color: var(--ink-dim); display: block; margin-bottom: 4px; }
-  .vm-wi-loc { font-family: var(--f-serif); font-size: 10px; color: var(--ink-ghost); font-style: italic; }
-
-  /* FEATURE */
-  .vm-feature {
-    display: grid; grid-template-columns: 1fr 1fr;
-    border-bottom: 1px solid var(--gold-rule);
-    min-height: 420px;
-  }
-  .vm-feature-l {
-    background: var(--surface); padding: 72px 80px;
-    border-right: 1px solid var(--gold-rule);
-    display: flex; flex-direction: column; justify-content: space-between;
-  }
-  .vm-feature-label { font-size: 9px; letter-spacing: 0.28em; text-transform: uppercase; color: var(--gold); opacity: 0.75; margin-bottom: 24px; }
-  .vm-feature-h { font-family: var(--f-serif); font-size: 28px; font-weight: 400; color: var(--ink); line-height: 1.3; }
-  .vm-feature-h em { font-style: italic; color: var(--gold-lt); }
-  .vm-feature-p { font-size: 13.5px; color: var(--ink-mid); line-height: 1.85; margin-top: 22px; }
-  .vm-feature-tags { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 32px; }
-  .vm-tag {
-    font-size: 8.5px; letter-spacing: 0.12em; text-transform: uppercase;
-    padding: 6px 14px; border: 1px solid var(--gold-rule); color: var(--ink-dim);
-    transition: border-color 0.2s, color 0.2s;
-  }
-  .vm-tag:hover { border-color: var(--gold-lt); color: var(--gold-lt); }
-  .vm-feature-r {
-    background: var(--bg); padding: 72px;
-    display: flex; align-items: center; justify-content: center;
-    position: relative; overflow: hidden;
-  }
-
-  /* AI Interface mockup */
-  .vm-ai-mockup {
-    width: 100%; max-width: 320px;
-    border: 1px solid var(--gold-rule);
-    background: var(--surface);
+  .hero-primary {
+    padding: 64px 56px 48px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    border-right: 1px solid var(--ink-faint);
     position: relative;
   }
-  .vm-ai-header {
-    padding: 14px 20px;
-    border-bottom: 1px solid var(--gold-rule);
-    display: flex; align-items: center; justify-content: space-between;
-  }
-  .vm-ai-header-l {
-    font-size: 8px; letter-spacing: 0.22em; text-transform: uppercase;
-    color: var(--gold); opacity: 0.8;
-  }
-  .vm-ai-header-r {
-    width: 6px; height: 6px; border-radius: 50%;
-    background: var(--gold-lt); opacity: 0.7;
-    animation: ai-pulse 2s ease-in-out infinite;
-  }
-  @keyframes ai-pulse { 0%,100%{opacity:0.3} 50%{opacity:1} }
-  .vm-ai-body { padding: 20px; min-height: 160px; }
-  .vm-ai-msg {
-    font-family: var(--f-serif); font-size: 12.5px;
-    color: var(--ink-mid); line-height: 1.7; font-style: italic;
-    margin-bottom: 14px; padding-left: 12px;
-    border-left: 1px solid var(--gold-rule);
-  }
-  .vm-ai-msg-user {
-    font-family: var(--f-sans); font-size: 11px;
-    color: var(--ink-dim); margin-bottom: 14px;
-    text-align: right; letter-spacing: 0.02em;
-  }
-  .vm-ai-input {
-    padding: 12px 20px;
-    border-top: 1px solid var(--gold-rule);
-    display: flex; align-items: center; justify-content: space-between;
-  }
-  .vm-ai-input-text {
-    font-size: 10px; color: var(--ink-ghost); letter-spacing: 0.06em;
-  }
-  .vm-ai-input-arrow {
-    font-size: 11px; color: var(--gold); opacity: 0.5;
-  }
-  /* Corner marks on AI mockup */
-  .vm-ai-mockup::before, .vm-ai-mockup::after,
-  .vm-ai-mockup .vm-ai-bl::before, .vm-ai-mockup .vm-ai-br::before {
-    content: ''; position: absolute; width: 10px; height: 10px;
-  }
-  .vm-ai-mockup::before { top: -1px; left: -1px; border-top: 1px solid var(--gold-lt); border-left: 1px solid var(--gold-lt); }
-  .vm-ai-mockup::after { top: -1px; right: -1px; border-top: 1px solid var(--gold-lt); border-right: 1px solid var(--gold-lt); }
 
-  /* FEATURE 2 — pillars */
-  .vm-feature2 {
-    border-bottom: 1px solid var(--gold-rule);
-    padding: 80px 80px;
+  /* Grid lines — visible construction */
+  .hero-primary::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background:
+      repeating-linear-gradient(
+        90deg,
+        var(--ink-trace) 0px, var(--ink-trace) 1px,
+        transparent 1px, transparent 120px
+      ),
+      repeating-linear-gradient(
+        0deg,
+        var(--ink-trace) 0px, var(--ink-trace) 1px,
+        transparent 1px, transparent 120px
+      );
+    pointer-events: none;
+  }
+
+  .hero-ref {
+    font-size: 8px;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--ink-lo);
+    margin-bottom: 8px;
+  }
+  .hero-h {
+    font-family: var(--f-serif);
+    font-size: clamp(38px, 5.5vw, 76px);
+    font-weight: 400;
+    line-height: 1.0;
+    color: var(--ink-hi);
+    margin-bottom: 32px;
+    letter-spacing: -0.01em;
+    position: relative;
+    z-index: 1;
+  }
+  .hero-h em {
+    font-style: italic;
+    color: var(--ochre-lt);
+    display: block;
+  }
+  .hero-body {
+    font-size: 12.5px;
+    color: var(--ink-mid);
+    line-height: 1.85;
+    max-width: 480px;
+    position: relative;
+    z-index: 1;
+  }
+  .hero-annotation {
+    margin-top: auto;
+    padding-top: 40px;
+    display: flex;
+    gap: 48px;
+    align-items: baseline;
+    border-top: 1px solid var(--ink-faint);
+    position: relative;
+    z-index: 1;
+  }
+  .anno {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+  }
+  .anno-label {
+    font-size: 7px;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--red-dim);
+  }
+  .anno-val {
+    font-size: 11px;
+    color: var(--ink-mid);
+  }
+
+  /* Right specification panel */
+  .hero-spec {
+    padding: 64px 40px 48px;
+    background: var(--surface);
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+  }
+  .spec-section {
+    margin-bottom: 40px;
+  }
+  .spec-label {
+    font-size: 7px;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    color: var(--red-dim);
+    margin-bottom: 16px;
+    padding-bottom: 8px;
+    border-bottom: 1px solid var(--ink-faint);
+  }
+  .spec-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    padding: 7px 0;
+    border-bottom: 1px solid var(--ink-trace);
+  }
+  .spec-k {
+    font-size: 8px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--ink-lo);
+  }
+  .spec-v {
+    font-size: 10px;
+    color: var(--ink-mid);
+    text-align: right;
+  }
+  .spec-v em { color: var(--ochre-lt); font-style: italic; }
+  .spec-note {
+    font-family: var(--f-serif);
+    font-size: 13px;
+    color: var(--ink-lo);
+    line-height: 1.7;
+    font-style: italic;
+    margin-top: auto;
+  }
+
+  /* ── WORK INDEX ── */
+  .section {
+    border-bottom: 1px solid var(--ink-faint);
+  }
+  .section-header {
+    display: grid;
+    grid-template-columns: 48px 1fr auto;
+    border-bottom: 1px solid var(--ink-faint);
+    align-items: center;
+  }
+  .sh-num {
+    border-right: 1px solid var(--ink-faint);
+    padding: 14px 0;
+    text-align: center;
+    font-size: 8px;
+    color: var(--red-dim);
+    letter-spacing: 0.1em;
+  }
+  .sh-title {
+    padding: 14px 24px;
+    font-size: 8px;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    color: var(--ochre);
+    opacity: 0.8;
+  }
+  .sh-count {
+    padding: 14px 24px;
+    font-size: 8px;
+    color: var(--ink-lo);
+    letter-spacing: 0.1em;
+  }
+
+  .work-grid {
+    display: grid;
+    grid-template-columns: 48px 1fr;
+  }
+  .work-edge {
+    border-right: 1px solid var(--ink-faint);
+  }
+  .work-list { }
+  .work-item {
+    display: grid;
+    grid-template-columns: 64px 1fr 1fr 200px;
+    align-items: center;
+    border-bottom: 1px solid var(--ink-trace);
+    cursor: pointer;
+    transition: background 0.15s;
+  }
+  .work-item:hover { background: var(--surface); }
+  .work-item:hover .wi-name { color: var(--ochre-lt); }
+  .wi-ref {
+    font-size: 8px;
+    color: var(--red-dim);
+    text-align: center;
+    padding: 24px 0;
+    border-right: 1px solid var(--ink-trace);
+  }
+  .wi-name {
+    font-family: var(--f-serif);
+    font-size: 20px;
+    color: var(--ink-hi);
+    padding: 24px 28px;
+    transition: color 0.15s;
+    border-right: 1px solid var(--ink-trace);
+  }
+  .wi-scope {
+    padding: 24px 28px;
+    font-size: 10px;
+    color: var(--ink-lo);
+    line-height: 1.6;
+    border-right: 1px solid var(--ink-trace);
+  }
+  .wi-meta {
+    padding: 24px 28px;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+  }
+  .wi-type {
+    font-size: 8px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--ink-lo);
+  }
+  .wi-loc {
+    font-size: 9px;
+    color: var(--ink-mid);
+  }
+
+  /* ── CAPABILITIES MATRIX ── */
+  .cap-grid {
+    display: grid;
+    grid-template-columns: 48px 1fr;
+  }
+  .cap-edge { border-right: 1px solid var(--ink-faint); }
+  .cap-body {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 0;
+  }
+  .cap-cell {
+    padding: 36px 32px;
+    border-right: 1px solid var(--ink-trace);
+    border-bottom: 1px solid var(--ink-trace);
+  }
+  .cap-cell:nth-child(3n) { border-right: none; }
+  .cap-cell:nth-last-child(-n+3) { border-bottom: none; }
+  .cap-cell-num {
+    font-size: 7px;
+    color: var(--red-dim);
+    letter-spacing: 0.1em;
+    margin-bottom: 14px;
+  }
+  .cap-cell-name {
+    font-size: 13px;
+    color: var(--ink-hi);
+    margin-bottom: 8px;
+  }
+  .cap-cell-stack {
+    font-size: 9.5px;
+    color: var(--ink-lo);
+    line-height: 1.6;
+  }
+
+  /* ── FEATURE — AI section ── */
+  .feature-grid {
+    display: grid;
+    grid-template-columns: 48px 1fr 380px;
+  }
+  .feature-edge { border-right: 1px solid var(--ink-faint); }
+  .feature-content {
+    padding: 56px;
+    border-right: 1px solid var(--ink-faint);
+  }
+  .feature-ref {
+    font-size: 7px;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    color: var(--red-dim);
+    margin-bottom: 28px;
+  }
+  .feature-h {
+    font-family: var(--f-serif);
+    font-size: 28px;
+    font-weight: 400;
+    color: var(--ink-hi);
+    line-height: 1.3;
+    margin-bottom: 20px;
+  }
+  .feature-h em { font-style: italic; color: var(--ochre-lt); }
+  .feature-p {
+    font-size: 12px;
+    color: var(--ink-mid);
+    line-height: 1.85;
+    margin-bottom: 28px;
+  }
+  .feature-tags {
+    display: flex;
+    gap: 6px;
+    flex-wrap: wrap;
+  }
+  .ftag {
+    font-size: 7.5px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    padding: 4px 10px;
+    border: 1px solid var(--ink-faint);
+    color: var(--ink-lo);
+  }
+
+  .feature-demo {
+    padding: 40px;
+    background: var(--surface);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .demo-panel {
+    width: 100%;
+    border: 1px solid var(--ink-faint);
     background: var(--bg);
   }
-  .vm-f2-inner { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 1px; background: var(--gold-rule); border: 1px solid var(--gold-rule); }
-  .vm-f2-card {
-    background: var(--surface); padding: 44px 36px;
-    display: flex; flex-direction: column;
+  .demo-head {
+    padding: 10px 16px;
+    border-bottom: 1px solid var(--ink-faint);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
   }
-  .vm-f2-num { font-family: var(--f-serif); font-size: 11px; color: var(--gold); opacity: 0.4; font-style: italic; margin-bottom: 20px; }
-  .vm-f2-title { font-family: var(--f-serif); font-size: 19px; color: var(--ink); margin-bottom: 12px; line-height: 1.25; }
-  .vm-f2-desc { font-size: 12.5px; color: var(--ink-dim); line-height: 1.75; flex: 1; }
-  .vm-f2-icon {
-    margin-top: 28px; height: 56px;
-    border: 1px solid var(--gold-rule);
-    display: flex; align-items: center; justify-content: center;
-    position: relative;
+  .demo-head-l { font-size: 7px; letter-spacing: 0.2em; text-transform: uppercase; color: var(--ochre); opacity: 0.7; }
+  .demo-head-r { width: 5px; height: 5px; border-radius: 50%; background: var(--ochre); animation: pulse 2s ease-in-out infinite; }
+  @keyframes pulse { 0%,100%{opacity:0.3} 50%{opacity:1} }
+  .demo-body { padding: 16px; min-height: 140px; }
+  .demo-msg {
+    font-family: var(--f-serif);
+    font-size: 11px; color: var(--ink-mid);
+    line-height: 1.7; font-style: italic;
+    padding-left: 10px; margin-bottom: 12px;
+    border-left: 1px solid var(--ochre-rule);
   }
-  .vm-f2-icon svg { opacity: 0.35; }
-  .vm-f2-icon::before { content: ''; position: absolute; top: -1px; left: -1px; width: 8px; height: 8px; border-top: 1px solid var(--gold); border-left: 1px solid var(--gold); opacity: 0.5; }
-  .vm-f2-icon::after { content: ''; position: absolute; bottom: -1px; right: -1px; width: 8px; height: 8px; border-bottom: 1px solid var(--gold); border-right: 1px solid var(--gold); opacity: 0.5; }
+  .demo-user {
+    font-size: 9px; color: var(--ink-lo);
+    text-align: right; margin-bottom: 12px;
+  }
+  .demo-input {
+    padding: 10px 16px;
+    border-top: 1px solid var(--ink-faint);
+    font-size: 9px; color: var(--ink-lo);
+    display: flex; justify-content: space-between;
+  }
+  .demo-arrow { color: var(--ochre); opacity: 0.4; }
 
-  /* CAPS */
-  .vm-caps { display: grid; grid-template-columns: 300px 1fr; gap: 0; border-bottom: 1px solid var(--gold-rule); }
-  .vm-caps-l { padding: 72px 80px; border-right: 1px solid var(--gold-rule); display: flex; flex-direction: column; justify-content: space-between; }
-  .vm-caps-label { font-size: 9px; letter-spacing: 0.28em; text-transform: uppercase; color: var(--gold); opacity: 0.75; margin-bottom: 24px; }
-  .vm-caps-note { font-family: var(--f-serif); font-size: 15px; color: var(--ink-mid); line-height: 1.8; font-style: italic; }
-  .vm-caps-r { padding: 72px 80px; display: grid; grid-template-columns: 1fr 1fr; gap: 0; }
-  .vm-cap { padding: 20px 0; border-bottom: 1px solid var(--ink-ghost); }
-  .vm-cap:nth-child(odd) { padding-right: 36px; border-right: 1px solid var(--ink-ghost); }
-  .vm-cap:nth-child(even) { padding-left: 36px; }
-  .vm-cap:nth-last-child(-n+2) { border-bottom: none; }
-  .vm-cap-n { font-size: 14px; color: rgba(221,213,197,0.85); margin-bottom: 5px; }
-  .vm-cap-d { font-size: 11.5px; color: var(--ink-dim); line-height: 1.65; }
-
-  /* CONTACT */
-  .vm-contact {
-    padding: 88px 80px; border-bottom: 1px solid var(--gold-rule);
-    display: grid; grid-template-columns: 1fr 1fr; gap: 120px; background: var(--surface);
+  /* ── PRINCIPLES ── */
+  .princ-grid {
+    display: grid;
+    grid-template-columns: 48px repeat(3, 1fr);
   }
-  .vm-contact-label { font-size: 9px; letter-spacing: 0.28em; text-transform: uppercase; color: var(--gold); opacity: 0.75; margin-bottom: 32px; }
-  .vm-contact-h { font-family: var(--f-serif); font-size: 34px; font-weight: 400; color: var(--ink); line-height: 1.2; margin-bottom: 24px; }
-  .vm-contact-h em { font-style: italic; color: var(--gold-lt); }
-  .vm-contact-p { font-size: 13.5px; color: var(--ink-mid); line-height: 1.85; margin-bottom: 40px; }
-  .vm-btn {
+  .princ-edge { border-right: 1px solid var(--ink-faint); }
+  .princ-cell {
+    padding: 44px 36px;
+    border-right: 1px solid var(--ink-trace);
+  }
+  .princ-cell:last-child { border-right: none; }
+  .princ-num {
+    font-size: 7px;
+    color: var(--red-dim);
+    letter-spacing: 0.1em;
+    margin-bottom: 20px;
+  }
+  .princ-title {
+    font-family: var(--f-serif);
+    font-size: 17px;
+    color: var(--ink-hi);
+    margin-bottom: 12px;
+    line-height: 1.25;
+  }
+  .princ-desc {
+    font-size: 11px;
+    color: var(--ink-lo);
+    line-height: 1.75;
+  }
+
+  /* ── CONTACT — title block footer ── */
+  .contact-block {
+    display: grid;
+    grid-template-columns: 48px 1fr 1fr;
+    background: var(--surface);
+  }
+  .contact-edge { border-right: 1px solid var(--ink-faint); }
+  .contact-left {
+    padding: 56px;
+    border-right: 1px solid var(--ink-faint);
+  }
+  .contact-ref {
+    font-size: 7px; letter-spacing: 0.22em; text-transform: uppercase;
+    color: var(--red-dim); margin-bottom: 28px;
+  }
+  .contact-h {
+    font-family: var(--f-serif);
+    font-size: 30px; font-weight: 400;
+    color: var(--ink-hi); line-height: 1.2;
+    margin-bottom: 20px;
+  }
+  .contact-h em { font-style: italic; color: var(--ochre-lt); }
+  .contact-p {
+    font-size: 12px; color: var(--ink-mid);
+    line-height: 1.85; margin-bottom: 32px;
+  }
+  .contact-btn {
     display: inline-flex; align-items: center; gap: 10px;
-    font-size: 9px; letter-spacing: 0.22em; text-transform: uppercase;
-    padding: 14px 32px; border: 1px solid var(--gold-rule);
-    color: var(--gold-lt); cursor: pointer; font-family: var(--f-sans);
-    transition: background 0.2s, color 0.2s, border-color 0.2s;
+    font-size: 9px; letter-spacing: 0.14em; text-transform: uppercase;
+    font-family: var(--f-mono); padding: 10px 24px;
+    border: 1px solid var(--ochre-rule); color: var(--ochre-lt);
+    cursor: pointer; transition: background 0.2s;
   }
-  .vm-btn:hover { background: var(--gold-dim); border-color: var(--gold-lt); color: var(--ink); }
-  .vm-contact-r { display: flex; flex-direction: column; justify-content: center; }
-  .vm-cr {
-    display: flex; justify-content: space-between; align-items: baseline;
-    padding: 18px 0; border-bottom: 1px solid var(--ink-ghost);
+  .contact-btn:hover { background: var(--ochre-dim); }
+  .contact-right { padding: 56px; }
+  .cr-row {
+    display: flex; justify-content: space-between;
+    align-items: baseline; padding: 10px 0;
+    border-bottom: 1px solid var(--ink-trace);
   }
-  .vm-cr:first-child { border-top: 1px solid var(--ink-ghost); }
-  .vm-crk { font-size: 8.5px; letter-spacing: 0.2em; text-transform: uppercase; color: var(--ink-ghost); }
-  .vm-crv { font-family: var(--f-serif); font-size: 14px; color: var(--ink-mid); font-style: italic; }
+  .cr-row:first-child { border-top: 1px solid var(--ink-trace); }
+  .cr-k { font-size: 7px; letter-spacing: 0.18em; text-transform: uppercase; color: var(--ink-lo); }
+  .cr-v { font-size: 10px; color: var(--ink-mid); }
 
-  /* FOOTER */
-  .vm-footer {
-    padding: 24px 80px; display: flex; justify-content: space-between; align-items: center;
+  /* ── COLOPHON ── */
+  .colophon {
+    display: grid;
+    grid-template-columns: 48px 1fr auto;
+    border-top: 1px solid var(--ink-faint);
+    align-items: center;
   }
-  .vm-fl { font-family: var(--f-serif); font-size: 10px; color: var(--ink-ghost); font-style: italic; }
-  .vm-fr { display: flex; gap: 32px; }
-  .vm-fr a {
-    font-size: 8.5px; letter-spacing: 0.2em; text-transform: uppercase;
-    color: var(--ink-ghost); cursor: pointer; transition: color 0.2s;
+  .colo-edge {
+    border-right: 1px solid var(--ink-faint);
+    padding: 14px 0;
   }
-  .vm-fr a:hover { color: var(--gold-lt); }
+  .colo-left {
+    padding: 14px 24px;
+    font-size: 8px;
+    color: var(--ink-lo);
+    letter-spacing: 0.06em;
+  }
+  .colo-right {
+    padding: 14px 24px;
+    display: flex; gap: 28px;
+  }
+  .colo-right a {
+    font-size: 7px; letter-spacing: 0.16em;
+    text-transform: uppercase; color: var(--ink-lo);
+    transition: color 0.2s;
+  }
+  .colo-right a:hover { color: var(--ochre-lt); }
 
-  /* RESPONSIVE */
+  /* ── RESPONSIVE ── */
   @media (max-width: 900px) {
-    .vm-nav { padding: 20px 24px; }
-    .vm-nav-links { display: none; }
-    .vm-hero { grid-template-columns: 1fr; padding: 64px 24px 56px; }
-    .vm-hero-r { border-left: none; padding-left: 0; border-top: 1px solid var(--gold-rule); padding-top: 32px; margin-top: 40px; }
-    .vm-hero-monogram { display: none; }
-    .vm-work, .vm-feature2, .vm-caps, .vm-contact { padding-left: 24px; padding-right: 24px; }
-    .vm-wi { grid-template-columns: 32px 1fr; gap: 16px; }
-    .vm-wi-meta { display: none; }
-    .vm-feature { grid-template-columns: 1fr; }
-    .vm-feature-l { padding: 48px 24px; border-right: none; border-bottom: 1px solid var(--gold-rule); }
-    .vm-feature-r { padding: 48px 24px; }
-    .vm-f2-inner { grid-template-columns: 1fr; }
-    .vm-caps { grid-template-columns: 1fr; }
-    .vm-caps-l { border-right: none; border-bottom: 1px solid var(--gold-rule); padding: 48px 24px; }
-    .vm-caps-r { grid-template-columns: 1fr; padding: 48px 24px; }
-    .vm-cap:nth-child(odd) { padding-right: 0; border-right: none; }
-    .vm-cap:nth-child(even) { padding-left: 0; }
-    .vm-contact { grid-template-columns: 1fr; gap: 48px; padding: 56px 24px; }
-    .vm-footer { padding: 20px 24px; flex-direction: column; gap: 12px; align-items: flex-start; }
+    .title-block { padding: 16px 20px; }
+    .tb-meta { display: none; }
+    .datum { grid-template-columns: 1fr; }
+    .datum-edge { display: none; }
+    .hero { grid-template-columns: 1fr; min-height: auto; }
+    .hero-primary { padding: 40px 20px 32px; border-right: none; border-bottom: 1px solid var(--ink-faint); }
+    .hero-primary::before { display: none; }
+    .hero-spec { padding: 32px 20px; }
+    .hero-annotation { flex-wrap: wrap; gap: 24px; }
+    .section-header { grid-template-columns: 1fr auto; }
+    .sh-num { display: none; }
+    .sh-title { padding: 14px 20px; }
+    .work-grid { grid-template-columns: 1fr; }
+    .work-edge { display: none; }
+    .work-item { grid-template-columns: 40px 1fr; }
+    .wi-scope, .wi-meta { display: none; }
+    .wi-name { padding: 20px 16px; font-size: 17px; border-right: none; }
+    .cap-grid { grid-template-columns: 1fr; }
+    .cap-edge { display: none; }
+    .cap-body { grid-template-columns: 1fr; }
+    .cap-cell { border-right: none; border-bottom: 1px solid var(--ink-trace); padding: 24px 20px; }
+    .cap-cell:last-child { border-bottom: none; }
+    .feature-grid { grid-template-columns: 1fr; }
+    .feature-edge { display: none; }
+    .feature-content { padding: 32px 20px; border-right: none; border-bottom: 1px solid var(--ink-faint); }
+    .feature-demo { padding: 24px 20px; }
+    .princ-grid { grid-template-columns: 1fr; }
+    .princ-edge { display: none; }
+    .princ-cell { border-right: none; border-bottom: 1px solid var(--ink-trace); padding: 28px 20px; }
+    .princ-cell:last-child { border-bottom: none; }
+    .contact-block { grid-template-columns: 1fr; }
+    .contact-edge { display: none; }
+    .contact-left, .contact-right { padding: 32px 20px; border-right: none; }
+    .contact-left { border-bottom: 1px solid var(--ink-faint); }
+    .colophon { grid-template-columns: 1fr; }
+    .colo-edge { display: none; }
+    .colo-left, .colo-right { padding: 12px 20px; }
   }
 </style>
 </head>
 <body>
 
-<div class="vm">
-  <!-- Gold corner marks -->
-  <div class="vm-corner vm-tl"><svg width="20" height="20"><line x1="0" y1="0" x2="20" y2="0" stroke="#A07838" stroke-width="1" opacity="0.6"/><line x1="0" y1="0" x2="0" y2="20" stroke="#A07838" stroke-width="1" opacity="0.6"/></svg></div>
-  <div class="vm-corner vm-tr"><svg width="20" height="20"><line x1="0" y1="0" x2="20" y2="0" stroke="#A07838" stroke-width="1" opacity="0.6"/><line x1="0" y1="0" x2="0" y2="20" stroke="#A07838" stroke-width="1" opacity="0.6"/></svg></div>
-  <div class="vm-corner vm-bl"><svg width="20" height="20"><line x1="0" y1="0" x2="20" y2="0" stroke="#A07838" stroke-width="1" opacity="0.6"/><line x1="0" y1="0" x2="0" y2="20" stroke="#A07838" stroke-width="1" opacity="0.6"/></svg></div>
-  <div class="vm-corner vm-br"><svg width="20" height="20"><line x1="0" y1="0" x2="20" y2="0" stroke="#A07838" stroke-width="1" opacity="0.6"/><line x1="0" y1="0" x2="0" y2="20" stroke="#A07838" stroke-width="1" opacity="0.6"/></svg></div>
-
-  <nav class="vm-nav">
-    <div class="vm-mark">Ventura <em>Media</em></div>
-    <ul class="vm-nav-links">
-      <li><a href="#work">Studio</a></li>
-      <li><a href="#work">Work</a></li>
-      <li><a href="#capabilities">Capabilities</a></li>
-      <li><a href="#contact">Contact</a></li>
-    </ul>
-    <a href="#contact" class="vm-nav-cta">Begin a Project &nbsp;&#8599;</a>
-  </nav>
-
-  <div class="vm-hero">
-    <div class="vm-hero-monogram">VM</div>
-    <div class="vm-hero-l">
-      <div class="vm-hero-pre">
-        <div class="vm-hero-pre-rule"></div>
-        <em>A Private Design &amp; Technology Studio</em>
-      </div>
-      <div class="vm-hero-h1">Craft at the<br>intersection of<br><em>design, data,</em><br>and intelligence.</div>
-      <div class="vm-hero-sub">Bespoke digital experiences, AI-native products, and brand systems for clients who understand that distinction cannot be templated.</div>
-      <div class="vm-hero-loc">Jersey City, New Jersey &nbsp;&middot;&nbsp; Est. 2025</div>
-    </div>
-    <div class="vm-hero-r">
-      <div class="vm-hero-stat"><div class="vm-stat-n">15<sub>yr</sub></div><div class="vm-stat-l">Design &amp; engineering<br>background</div></div>
-      <div class="vm-stat-rule"></div>
-      <div class="vm-hero-stat"><div class="vm-stat-n">100<sub>%</sub></div><div class="vm-stat-l">Custom — no templates,<br>no lock-in</div></div>
-      <div class="vm-stat-rule"></div>
-      <div class="vm-hero-stat"><div class="vm-stat-n">01<sub>&#160;principal</sub></div><div class="vm-stat-l">You work with the person<br>who builds it</div></div>
-    </div>
+<!-- TITLE BLOCK -->
+<header class="title-block">
+  <div class="tb-name">Ventura <em>Media</em></div>
+  <div class="tb-meta">
+    <span class="tb-meta-item">JC, <span>NJ</span></span>
+    <span class="tb-meta-item">Est. <span>2025</span></span>
+    <span class="tb-meta-item">Status: <span>Selective</span></span>
+    <a href="#contact" class="tb-cta">New inquiry ↗</a>
   </div>
+</header>
 
-  <div class="vm-band">
-    <div class="vm-band-track">
-      <div class="vm-band-item"><div class="vm-band-diamond"></div><span class="vm-band-text">Web Design &amp; Engineering</span></div>
-      <div class="vm-band-item"><div class="vm-band-diamond"></div><span class="vm-band-text">AI Agent Integration</span></div>
-      <div class="vm-band-item"><div class="vm-band-diamond"></div><span class="vm-band-text">Brand Identity Systems</span></div>
-      <div class="vm-band-item"><div class="vm-band-diamond"></div><span class="vm-band-text">Database Infrastructure</span></div>
-      <div class="vm-band-item"><div class="vm-band-diamond"></div><span class="vm-band-text">Photography &amp; Direction</span></div>
-      <div class="vm-band-item"><div class="vm-band-diamond"></div><span class="vm-band-text">Platform Migration</span></div>
-      <!-- duplicate for seamless loop -->
-      <div class="vm-band-item"><div class="vm-band-diamond"></div><span class="vm-band-text">Web Design &amp; Engineering</span></div>
-      <div class="vm-band-item"><div class="vm-band-diamond"></div><span class="vm-band-text">AI Agent Integration</span></div>
-      <div class="vm-band-item"><div class="vm-band-diamond"></div><span class="vm-band-text">Brand Identity Systems</span></div>
-      <div class="vm-band-item"><div class="vm-band-diamond"></div><span class="vm-band-text">Database Infrastructure</span></div>
-      <div class="vm-band-item"><div class="vm-band-diamond"></div><span class="vm-band-text">Photography &amp; Direction</span></div>
-      <div class="vm-band-item"><div class="vm-band-diamond"></div><span class="vm-band-text">Platform Migration</span></div>
-    </div>
+<!-- DATUM -->
+<div class="datum">
+  <div class="datum-edge">
+    <span class="edge-tick">A.01</span>
+    <span class="edge-tick">A.02</span>
+    <span class="edge-tick">A.03</span>
   </div>
+  <div class="datum-field">
 
-  <div class="vm-work" id="work">
-    <div class="vm-sh"><span class="vm-sh-label">Selected Work</span><div class="vm-sh-rule"></div><span class="vm-sh-aside">Three engagements</span></div>
-
-    <div class="vm-wi">
-      <div class="vm-wi-n">001</div>
-      <div class="vm-wi-body">
-        <div class="vm-wi-t">Kelly-McKenna Gallery</div>
-        <div class="vm-wi-desc">Gallery website with integrated AI art advisor, exhibition management, and artist portfolios</div>
-      </div>
-      <div class="vm-wi-meta"><span class="vm-wi-type">Gallery &middot; AI &middot; Web</span><span class="vm-wi-loc">Spring Lake, NJ</span></div>
-    </div>
-
-    <div class="vm-wi">
-      <div class="vm-wi-n">002</div>
-      <div class="vm-wi-body">
-        <div class="vm-wi-t">Ventura, Miesowitz &amp; Keough</div>
-        <div class="vm-wi-desc">Full-stack law firm site with 14 practice areas, attorney bios, contact system, and JSON-LD SEO</div>
-      </div>
-      <div class="vm-wi-meta"><span class="vm-wi-type">Law &middot; Brand &middot; Web</span><span class="vm-wi-loc">Summit, NJ</span></div>
-    </div>
-
-    <div class="vm-wi">
-      <div class="vm-wi-n">003</div>
-      <div class="vm-wi-body">
-        <div class="vm-wi-t">Rob Ventura Studio</div>
-        <div class="vm-wi-desc">Artist portfolio with AI-powered Artist Talk, exhibition archive, and Mailchimp integration</div>
-      </div>
-      <div class="vm-wi-meta"><span class="vm-wi-type">Fine Art &middot; AI &middot; Full-stack</span><span class="vm-wi-loc">Hoboken, NJ</span></div>
-    </div>
-  </div>
-
-  <!-- FEATURE: AI showcase -->
-  <div class="vm-feature">
-    <div class="vm-feature-l">
-      <div>
-        <div class="vm-feature-label">Signature Capability</div>
-        <div class="vm-feature-h">AI-native interfaces,<br>built into the <em>fabric</em><br>of every site.</div>
-        <div class="vm-feature-p">Every build we deliver can accommodate a custom AI chat interface — not a third-party widget, but a fully integrated, design-matched panel trained on the client's own context. Gallery guides, legal intake, artist Q&amp;A, product advisors.</div>
-      </div>
-      <div class="vm-feature-tags">
-        <span class="vm-tag">Claude API</span>
-        <span class="vm-tag">Custom UI</span>
-        <span class="vm-tag">RAG</span>
-        <span class="vm-tag">Context-aware</span>
-        <span class="vm-tag">Zero third-party</span>
-      </div>
-    </div>
-    <div class="vm-feature-r">
-      <div class="vm-ai-mockup">
-        <div class="vm-ai-header">
-          <span class="vm-ai-header-l">Gallery Advisor</span>
-          <span class="vm-ai-header-r"></span>
+    <!-- HERO -->
+    <div class="hero">
+      <div class="hero-primary">
+        <div>
+          <div class="hero-ref">Drawing A.01 — Primary elevation</div>
+          <div class="hero-h">
+            Design, data,<br>
+            <em>and intelligence.</em>
+          </div>
+          <div class="hero-body">
+            A private design and technology studio. Bespoke digital experiences, AI-native products, and brand systems — for clients who understand that distinction cannot be templated.
+          </div>
         </div>
-        <div class="vm-ai-body">
-          <div class="vm-ai-msg-user">Tell me about Elena Marsh's new series.</div>
-          <div class="vm-ai-msg">Elena's latest body of work explores the tension between architectural permanence and organic decay. The series was shown at the gallery's spring exhibition — three of the seven pieces are still available for inquiry.</div>
-          <div class="vm-ai-msg-user">What's the price range?</div>
-          <div class="vm-ai-msg">I can connect you with the gallery director for pricing. Shall I open an inquiry?</div>
+        <div class="hero-annotation">
+          <div class="anno"><span class="anno-label">Experience</span><span class="anno-val">15 years</span></div>
+          <div class="anno"><span class="anno-label">Method</span><span class="anno-val">100% custom</span></div>
+          <div class="anno"><span class="anno-label">Principal</span><span class="anno-val">Rob Ventura</span></div>
+          <div class="anno"><span class="anno-label">Location</span><span class="anno-val">Jersey City, NJ</span></div>
         </div>
-        <div class="vm-ai-input">
-          <span class="vm-ai-input-text">Ask about any work or artist&hellip;</span>
-          <span class="vm-ai-input-arrow">&#8599;</span>
+      </div>
+
+      <div class="hero-spec">
+        <div>
+          <div class="spec-section">
+            <div class="spec-label">Specification</div>
+            <div class="spec-row"><span class="spec-k">Type</span><span class="spec-v">Design &amp; technology studio</span></div>
+            <div class="spec-row"><span class="spec-k">Structure</span><span class="spec-v">Solo principal</span></div>
+            <div class="spec-row"><span class="spec-k">Delivery</span><span class="spec-v">Full ownership transfer</span></div>
+            <div class="spec-row"><span class="spec-k">Stack</span><span class="spec-v">React · Vite · Supabase · Claude</span></div>
+            <div class="spec-row"><span class="spec-k">Platforms</span><span class="spec-v"><em>None</em> — no lock-in</span></div>
+          </div>
+          <div class="spec-section">
+            <div class="spec-label">Disciplines</div>
+            <div class="spec-row"><span class="spec-k">01</span><span class="spec-v">Web design &amp; engineering</span></div>
+            <div class="spec-row"><span class="spec-k">02</span><span class="spec-v">AI agent integration</span></div>
+            <div class="spec-row"><span class="spec-k">03</span><span class="spec-v">Brand identity systems</span></div>
+            <div class="spec-row"><span class="spec-k">04</span><span class="spec-v">Database infrastructure</span></div>
+            <div class="spec-row"><span class="spec-k">05</span><span class="spec-v">Photography &amp; direction</span></div>
+            <div class="spec-row"><span class="spec-k">06</span><span class="spec-v">Platform migration</span></div>
+          </div>
+        </div>
+        <div class="spec-note">"You work with the person who builds it."</div>
+      </div>
+    </div>
+
+    <!-- WORK -->
+    <div class="section">
+      <div class="section-header">
+        <div class="sh-num">B</div>
+        <div class="sh-title">Selected Work</div>
+        <div class="sh-count">3 engagements</div>
+      </div>
+      <div class="work-grid">
+        <div class="work-edge"></div>
+        <div class="work-list">
+          <div class="work-item">
+            <div class="wi-ref">001</div>
+            <div class="wi-name">Kelly-McKenna Gallery</div>
+            <div class="wi-scope">Gallery site with integrated AI art advisor, exhibition management, and artist portfolios</div>
+            <div class="wi-meta"><span class="wi-type">Gallery · AI · Web</span><span class="wi-loc">Spring Lake, NJ</span></div>
+          </div>
+          <div class="work-item">
+            <div class="wi-ref">002</div>
+            <div class="wi-name">Ventura, Miesowitz &amp; Keough</div>
+            <div class="wi-scope">Law firm site — 14 practice areas, attorney bios, contact system, JSON-LD, 43 tests</div>
+            <div class="wi-meta"><span class="wi-type">Law · Brand · Web</span><span class="wi-loc">Summit, NJ</span></div>
+          </div>
+          <div class="work-item">
+            <div class="wi-ref">003</div>
+            <div class="wi-name">Rob Ventura Studio</div>
+            <div class="wi-scope">Artist portfolio with AI-powered Artist Talk, exhibition archive, Mailchimp integration</div>
+            <div class="wi-meta"><span class="wi-type">Fine Art · AI · Full-stack</span><span class="wi-loc">Hoboken, NJ</span></div>
+          </div>
         </div>
       </div>
     </div>
-  </div>
 
-  <!-- FEATURE 2: Three pillars -->
-  <div class="vm-feature2">
-    <div class="vm-sh" style="margin-bottom:44px;"><span class="vm-sh-label">Studio Principles</span><div class="vm-sh-rule"></div></div>
-    <div class="vm-f2-inner">
-      <div class="vm-f2-card">
-        <div class="vm-f2-num">i</div>
-        <div class="vm-f2-title">Ownership-First Architecture</div>
-        <div class="vm-f2-desc">No SaaS, no subscriptions, no vendor lock-in. You receive the repository, the schema, the design system — everything. Full transfer on delivery.</div>
-        <div class="vm-f2-icon">
-          <svg width="24" height="24" fill="none" stroke="#A07838" stroke-width="1.2"><rect x="3" y="11" width="18" height="11" rx="1"/><path d="M7 11V7a5 5 0 0110 0v4"/></svg>
-        </div>
+    <!-- CAPABILITIES -->
+    <div class="section">
+      <div class="section-header">
+        <div class="sh-num">C</div>
+        <div class="sh-title">Capabilities</div>
+        <div class="sh-count">6 disciplines</div>
       </div>
-      <div class="vm-f2-card">
-        <div class="vm-f2-num">ii</div>
-        <div class="vm-f2-title">Mathematical Design Precision</div>
-        <div class="vm-f2-desc">Golden ratio, Fibonacci grids, and logarithmic spacing applied to every layout — not as ornament, but as structural foundation.</div>
-        <div class="vm-f2-icon">
-          <svg width="24" height="24" fill="none" stroke="#A07838" stroke-width="1.2"><circle cx="12" cy="12" r="2"/><path d="M12 2v4m0 12v4M2 12h4m12 0h4"/><circle cx="12" cy="12" r="9"/></svg>
-        </div>
-      </div>
-      <div class="vm-f2-card">
-        <div class="vm-f2-num">iii</div>
-        <div class="vm-f2-title">Principal-Led, Always</div>
-        <div class="vm-f2-desc">One principal conceives, designs, engineers, and deploys every engagement. No handoffs, no account managers, no dilution of intent.</div>
-        <div class="vm-f2-icon">
-          <svg width="24" height="24" fill="none" stroke="#A07838" stroke-width="1.2"><path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+      <div class="cap-grid">
+        <div class="cap-edge"></div>
+        <div class="cap-body">
+          <div class="cap-cell"><div class="cap-cell-num">C.01</div><div class="cap-cell-name">Web Design &amp; Engineering</div><div class="cap-cell-stack">React · TypeScript · Vite · Vercel</div></div>
+          <div class="cap-cell"><div class="cap-cell-num">C.02</div><div class="cap-cell-name">AI Agent Integration</div><div class="cap-cell-stack">Claude API · Custom chat · RAG</div></div>
+          <div class="cap-cell"><div class="cap-cell-num">C.03</div><div class="cap-cell-name">Database &amp; Backend</div><div class="cap-cell-stack">Supabase · PostgreSQL · FastAPI</div></div>
+          <div class="cap-cell"><div class="cap-cell-num">C.04</div><div class="cap-cell-name">Brand Identity Systems</div><div class="cap-cell-stack">Typography · Color · Visual language</div></div>
+          <div class="cap-cell"><div class="cap-cell-num">C.05</div><div class="cap-cell-name">Photography &amp; Direction</div><div class="cap-cell-stack">Product · Portrait · Fine art</div></div>
+          <div class="cap-cell"><div class="cap-cell-num">C.06</div><div class="cap-cell-name">Platform Migration</div><div class="cap-cell-stack">ArtLogic · Squarespace · WordPress</div></div>
         </div>
       </div>
     </div>
-  </div>
 
-  <div class="vm-caps" id="capabilities">
-    <div class="vm-caps-l">
-      <div>
-        <div class="vm-caps-label">Capabilities</div>
-        <div class="vm-caps-note">Bespoke only.<br>You own everything — outright.<br>No platforms, no subscriptions,<br>no vendor dependencies.</div>
+    <!-- AI FEATURE -->
+    <div class="section">
+      <div class="section-header">
+        <div class="sh-num">D</div>
+        <div class="sh-title">Signature — AI Integration</div>
+        <div class="sh-count"></div>
+      </div>
+      <div class="feature-grid">
+        <div class="feature-edge"></div>
+        <div class="feature-content">
+          <div class="feature-ref">Detail D.01</div>
+          <div class="feature-h">AI-native interfaces, built<br>into the <em>fabric</em> of every site.</div>
+          <div class="feature-p">Every build can accommodate a custom AI chat interface — not a third-party widget, but a fully integrated, design-matched panel trained on the client's own context. Gallery guides, legal intake, artist Q&amp;A, product advisors.</div>
+          <div class="feature-tags">
+            <span class="ftag">Claude API</span>
+            <span class="ftag">Custom UI</span>
+            <span class="ftag">RAG</span>
+            <span class="ftag">Context-aware</span>
+            <span class="ftag">Zero third-party</span>
+          </div>
+        </div>
+        <div class="feature-demo">
+          <div class="demo-panel">
+            <div class="demo-head"><span class="demo-head-l">Gallery Advisor</span><span class="demo-head-r"></span></div>
+            <div class="demo-body">
+              <div class="demo-user">Tell me about Elena Marsh's new series.</div>
+              <div class="demo-msg">Elena's latest body of work explores the tension between architectural permanence and organic decay. Three of the seven pieces are still available.</div>
+              <div class="demo-user">What's the price range?</div>
+              <div class="demo-msg">I can connect you with the director for pricing. Shall I open an inquiry?</div>
+            </div>
+            <div class="demo-input"><span>Ask about any work or artist…</span><span class="demo-arrow">↗</span></div>
+          </div>
+        </div>
       </div>
     </div>
-    <div class="vm-caps-r">
-      <div class="vm-cap"><div class="vm-cap-n">Web Design &amp; Engineering</div><div class="vm-cap-d">React &middot; TypeScript &middot; Vite &middot; Vercel &middot; Full-stack production</div></div>
-      <div class="vm-cap"><div class="vm-cap-n">AI Agent Integration</div><div class="vm-cap-d">Claude API &middot; Custom chat &middot; RAG &middot; Workflow automation</div></div>
-      <div class="vm-cap"><div class="vm-cap-n">Database &amp; Backend</div><div class="vm-cap-d">Supabase &middot; PostgreSQL &middot; FastAPI &middot; Railway</div></div>
-      <div class="vm-cap"><div class="vm-cap-n">Brand Identity Systems</div><div class="vm-cap-d">Typography &middot; Color &middot; Visual language &middot; OG &middot; Favicon</div></div>
-      <div class="vm-cap"><div class="vm-cap-n">Photography &amp; Direction</div><div class="vm-cap-d">Product &middot; Portrait &middot; Fine art documentation</div></div>
-      <div class="vm-cap"><div class="vm-cap-n">Platform Migration</div><div class="vm-cap-d">ArtLogic &middot; Squarespace &middot; WordPress &middot; Legacy CMS exits</div></div>
+
+    <!-- PRINCIPLES -->
+    <div class="section">
+      <div class="section-header">
+        <div class="sh-num">E</div>
+        <div class="sh-title">Principles</div>
+        <div class="sh-count"></div>
+      </div>
+      <div class="princ-grid">
+        <div class="princ-edge"></div>
+        <div class="princ-cell"><div class="princ-num">E.01</div><div class="princ-title">Ownership-first</div><div class="princ-desc">No SaaS. No subscriptions. You receive the repo, the schema, the design system. Full transfer on delivery.</div></div>
+        <div class="princ-cell"><div class="princ-num">E.02</div><div class="princ-title">Mathematical precision</div><div class="princ-desc">Golden ratio, Fibonacci grids, logarithmic spacing. Not ornament — structural foundation.</div></div>
+        <div class="princ-cell"><div class="princ-num">E.03</div><div class="princ-title">Principal-led, always</div><div class="princ-desc">One principal conceives, designs, engineers, and deploys. No handoffs. No dilution of intent.</div></div>
+      </div>
+    </div>
+
+  </div><!-- /datum-field -->
+</div><!-- /datum -->
+
+<!-- CONTACT -->
+<div class="section" id="contact">
+  <div class="section-header">
+    <div class="sh-num">F</div>
+    <div class="sh-title">New Engagements</div>
+    <div class="sh-count">Q2 2026</div>
+  </div>
+  <div class="contact-block">
+    <div class="contact-edge"></div>
+    <div class="contact-left">
+      <div class="contact-ref">Inquiry F.01</div>
+      <div class="contact-h">Selective. Serious<br>inquiries are <em>welcome.</em></div>
+      <div class="contact-p">A small number of projects are accepted each quarter. If you are building something that deserves to be made well — reach out directly.</div>
+      <a href="mailto:info@venturamedia.com" class="contact-btn">info@venturamedia.com ↗</a>
+    </div>
+    <div class="contact-right">
+      <div class="cr-row"><span class="cr-k">Studio</span><span class="cr-v">Jersey City, New Jersey</span></div>
+      <div class="cr-row"><span class="cr-k">Mail</span><span class="cr-v">info@venturamedia.com</span></div>
+      <div class="cr-row"><span class="cr-k">Principal</span><span class="cr-v">Rob Ventura</span></div>
+      <div class="cr-row"><span class="cr-k">Availability</span><span class="cr-v">Q2 2026 — selective</span></div>
+      <div class="cr-row"><span class="cr-k">Minimum</span><span class="cr-v">$5,000</span></div>
     </div>
   </div>
-
-  <div class="vm-contact" id="contact">
-    <div>
-      <div class="vm-contact-label">New Engagements</div>
-      <div class="vm-contact-h">Selective.<br>Serious inquiries<br>are <em>welcome.</em></div>
-      <div class="vm-contact-p">A small number of projects are accepted each quarter. If you are building something that deserves to be made well — reach out directly.</div>
-      <a href="mailto:info@venturamedia.com" class="vm-btn">info@venturamedia.com &nbsp;&#8599;</a>
-    </div>
-    <div class="vm-contact-r">
-      <div class="vm-cr"><span class="vm-crk">Studio</span><span class="vm-crv">Jersey City, New Jersey</span></div>
-      <div class="vm-cr"><span class="vm-crk">Electronic Mail</span><span class="vm-crv">info@venturamedia.com</span></div>
-      <div class="vm-cr"><span class="vm-crk">Principal</span><span class="vm-crv">Rob Ventura</span></div>
-      <div class="vm-cr"><span class="vm-crk">Availability</span><span class="vm-crv">Q2 2026 — selective</span></div>
-    </div>
-  </div>
-
-  <footer class="vm-footer">
-    <div class="vm-fl">&copy; 2026 Ventura Media — All rights reserved.</div>
-    <div class="vm-fr">
-      <a href="#">Privacy</a>
-      <a href="#">Instagram</a>
-      <a href="#">LinkedIn</a>
-    </div>
-  </footer>
 </div>
+
+<!-- COLOPHON -->
+<footer class="colophon">
+  <div class="colo-edge"></div>
+  <div class="colo-left">© 2026 Ventura Media. All rights reserved.</div>
+  <div class="colo-right">
+    <a href="#">Privacy</a>
+    <a href="#">Instagram</a>
+    <a href="#">LinkedIn</a>
+  </div>
+</footer>
 
 </body>
 </html>
